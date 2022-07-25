@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int FASTEST_SEC_INTERVAL = 1;
     private static final int PERMISSIONS_FINE_LOCATION = 9;
     //UI elements
-    TextView tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates;
+    TextView tv_nbrupdates,tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates;
 
     Switch sw_locationUpdates, sw_gps;
 
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        tv_nbrupdates = findViewById(R.id.tv_nbrupdates);
         tv_lat = findViewById(R.id.tv_lat);
         tv_lon = findViewById(R.id.tv_lon);
         tv_altitude = findViewById(R.id.tv_altitude);
@@ -65,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
 
-                Location location = locationResult.getLastLocation();
-                updateUIValues(location);
+                tv_nbrupdates.setText(String.valueOf(Integer.parseInt((String) tv_nbrupdates.getText())+1));
+                updateUIValues(locationResult.getLastLocation());
             }
         };
 
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     private void startLocationUpdate() {
         tv_updates.setText("Location is being tracked");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, Looper.getMainLooper());
         }else{
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_FINE_LOCATION);
         }
