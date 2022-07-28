@@ -6,6 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/btn_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="195dp"
+        android:layout_marginBottom="96dp"
+        android:background="#2DFFFFFF"
+        android:text="stop"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/btn_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
         android:id="@+id/tv_labelnbrupdates"
         android:layout_width="100dp"
@@ -172,5 +190,35 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintTop_toBottomOf="@+id/tv_speed"
         tools:layout_editor_absoluteX="1dp" />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="96dp"
+        android:background="#2DFFFFFF"
+        android:text="Start"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="280dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="66dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="66dp"
+        android:background="#040303"
+        android:text="00:00:00.000"
+        android:textColor="#3DD811"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_labelsensor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
