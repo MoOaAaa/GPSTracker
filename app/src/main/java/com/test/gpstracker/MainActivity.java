@@ -28,8 +28,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int BASE_SEC_INTERVAL = 5;
-    public static final int FASTEST_SEC_INTERVAL = 1;
+    public static final int BASE_SEC_INTERVAL = 1;
     private static final int PERMISSIONS_FINE_LOCATION = 9;
     //UI elements
     private TextView tv_nbrupdates,tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates, tv_time;
@@ -82,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(1000 * BASE_SEC_INTERVAL);
-        locationRequest.setFastestInterval(1000 * FASTEST_SEC_INTERVAL);
         locationRequest.setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY);
 
         locationCallBack = new LocationCallback() {
