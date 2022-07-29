@@ -6,12 +6,14 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,9 +32,11 @@ public class MainActivity extends AppCompatActivity {
     public static final int FASTEST_SEC_INTERVAL = 1;
     private static final int PERMISSIONS_FINE_LOCATION = 9;
     //UI elements
-    TextView tv_nbrupdates,tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates;
+    private TextView tv_nbrupdates,tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates, tv_time;
 
-    Switch sw_locationUpdates, sw_gps;
+    private Button btn_start, btn_stop;
+
+    private Switch sw_locationUpdates, sw_gps;
 
     LocationRequest locationRequest;
 
@@ -41,9 +45,24 @@ public class MainActivity extends AppCompatActivity {
     //Google's API for locations services
     FusedLocationProviderClient fusedLocationProviderClient;
 
+    private Chronometer chronometer;
+    private Thread threadChrono;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+//            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+//                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
+//            }else{
+//                startLocationService();
+//            }
+//        }else{
+//            startLocationService();
+//        }
+
         setContentView(R.layout.activity_main);
 
         tv_nbrupdates = findViewById(R.id.tv_nbrupdates);
@@ -56,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
         tv_updates = findViewById(R.id.tv_updates);
         sw_locationUpdates = findViewById(R.id.sw_locationsupdates);
         sw_gps = findViewById(R.id.sw_gps);
+
+        tv_time = findViewById(R.id.tv_time);
+        btn_start = findViewById(R.id.btn_start);
+        btn_stop = findViewById(R.id.btn_stop);
 
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(1000 * BASE_SEC_INTERVAL);
@@ -90,6 +113,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btn_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (chronometer == null){
+                    chronometer = new Chronometer(MainActivity.this);
+                    threadChrono = new Thread(chronometer);
+                    threadChrono.start();
+                    chronometer.startChrono();
+                }
+            }
+        });
+
+        btn_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (chronometer != null){
+                    chronometer.stopChrono();
+                    threadChrono.interrupt();
+                    threadChrono = null;
+                    chronometer = null;
+                }
+            }
+        });
+
         updateGPS();
     }
 
@@ -107,9 +154,9 @@ public class MainActivity extends AppCompatActivity {
     private void startLocationUpdate() {
         tv_updates.setText("Location is being tracked");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, Looper.getMainLooper());
-        }else{
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_FINE_LOCATION);
+        }else{
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, Looper.getMainLooper());
         }
         updateGPS();
     }
@@ -142,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Location location) {
                     updateUIValues(location);
-
                 }
             });
         }
@@ -169,5 +215,19 @@ public class MainActivity extends AppCompatActivity {
         }else{
             tv_speed.setText("Not available");
         }
+    }
+
+    private void startLocationService(){
+        Intent intent = new Intent(MainActivity.this, LocationService.class);
+        startService(intent);
+    }
+
+    public void updateTimerText(String time){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tv_time.setText(time);
+            }
+        });
     }
 }
