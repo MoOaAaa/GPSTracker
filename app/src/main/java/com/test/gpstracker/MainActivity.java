@@ -217,11 +217,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startLocationService(){
-        Intent intent = new Intent(MainActivity.this, LocationService.class);
-        startService(intent);
-    }
-
     public void updateTimerText(String time){
         runOnUiThread(new Runnable() {
             @Override
